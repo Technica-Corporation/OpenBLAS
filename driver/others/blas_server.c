@@ -13,9 +13,9 @@ met:
       notice, this list of conditions and the following disclaimer in
       the documentation and/or other materials provided with the
       distribution.
-   3. Neither the name of the OpenBLAS project nor the names of 
-      its contributors may be used to endorse or promote products 
-      derived from this software without specific prior written 
+   3. Neither the name of the OpenBLAS project nor the names of
+      its contributors may be used to endorse or promote products
+      derived from this software without specific prior written
       permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -72,6 +72,9 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "common.h"
 #if defined(OS_LINUX) || defined(OS_NETBSD) || defined(OS_DARWIN) || defined(OS_ANDROID) || defined(OS_SUNOS) || defined(OS_FREEBSD) || defined(OS_OPENBSD) || defined(OS_DRAGONFLY) || defined(OS_HAIKU)
 #include <dlfcn.h>
+#include <signal.h>
+#include <sys/resource.h>
+#include <sys/time.h>
 #include <signal.h>
 #include <sys/resource.h>
 #include <sys/time.h>
@@ -447,7 +450,7 @@ blas_queue_t *tscq;
       pthread_mutex_lock  (&thread_status[cpu].lock);
       thread_status[cpu].queue = (blas_queue_t * volatile) ((long)thread_status[cpu].queue & 0);  /* Need a trick */
       pthread_mutex_unlock  (&thread_status[cpu].lock);
-      
+
       WMB;
 
     }
@@ -580,19 +583,19 @@ int blas_thread_init(void){
 		     &blas_thread_server, (void *)i);
 #endif
       if(ret!=0){
-	struct rlimit rlim;
+	// struct rlimit rlim;
         const char *msg = strerror(ret);
         fprintf(STDERR, "OpenBLAS blas_thread_init: pthread_create: %s\n", msg);
-#ifdef RLIMIT_NPROC
-        if(0 == getrlimit(RLIMIT_NPROC, &rlim)) {
-          fprintf(STDERR, "OpenBLAS blas_thread_init: RLIMIT_NPROC "
-                  "%ld current, %ld max\n", (long)(rlim.rlim_cur), (long)(rlim.rlim_max));
-        }
-#endif
-        if(0 != raise(SIGINT)) {
-          fprintf(STDERR, "OpenBLAS blas_thread_init: calling exit(3)\n");
-          exit(EXIT_FAILURE);
-        }
+// #ifdef RLIMIT_NPROC
+//         if(0 == getrlimit(RLIMIT_NPROC, &rlim)) {
+//           fprintf(STDERR, "OpenBLAS blas_thread_init: RLIMIT_NPROC "
+//                   "%ld current, %ld max\n", (long)(rlim.rlim_cur), (long)(rlim.rlim_max));
+//         }
+// #endif
+//         if(0 != raise(SIGINT)) {
+//           fprintf(STDERR, "OpenBLAS blas_thread_init: calling exit(3)\n");
+//           exit(EXIT_FAILURE);
+//         }
       }
     }
 
@@ -671,7 +674,7 @@ int exec_blas_async(BLASLONG pos, blas_queue_t *queue){
       } else {
 	pthread_mutex_lock (&thread_status[i].lock);
 	tsiq = thread_status[i].queue;
-	pthread_mutex_unlock (&thread_status[i].lock);      
+	pthread_mutex_unlock (&thread_status[i].lock);
 	while(tsiq) {
 	  i ++;
 	  if (i >= blas_num_threads - 1) i = 0;
@@ -999,4 +1002,3 @@ int BLASFUNC(blas_thread_shutdown)(void){
 }
 
 #endif
-

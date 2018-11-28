@@ -121,10 +121,10 @@ extern "C" {
 #undef  GOTO_ATOM
 #endif
 #else
-#include <sys/mman.h>
-#ifndef NO_SYSV_IPC
-#include <sys/shm.h>
-#endif
+// #include <sys/mman.h>
+// #ifndef NO_SYSV_IPC
+// #include <sys/shm.h>
+// #endif
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
@@ -434,6 +434,10 @@ please https://github.com/xianyi/OpenBLAS/issues/246
 #include "common_zarch.h"
 #endif
 
+#ifdef ARCH_ESP32
+#include "common_esp32.h"
+#endif
+
 #ifndef ASSEMBLER
 #ifdef OS_WINDOWSSTORE
 typedef char env_var_t[MAX_PATH];
@@ -662,7 +666,7 @@ __declspec(dllimport) int __cdecl omp_get_num_procs(void);
 #endif
 
 #if (__STDC_VERSION__ >= 201112L)
-#if defined(C_GCC) && ( __GNUC__ < 7) 
+#if defined(C_GCC) && ( __GNUC__ < 7)
 // workaround for GCC bug 65467
 #ifndef _Atomic
 #define _Atomic volatile

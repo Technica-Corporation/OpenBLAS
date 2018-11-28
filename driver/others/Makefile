@@ -48,6 +48,10 @@ ifeq ($(CORE), PPC440)
 MEMORY = memory_qalloc.c
 endif
 
+ifeq ($(CORE), ESP32)
+MEMORY = memory_esp32.c
+endif
+
 ifndef MEMORY
 MEMORY = memory.c
 endif

@@ -78,6 +78,10 @@ $architecture = arm    if ($data =~ /ARCH_ARM/);
 $architecture = arm64  if ($data =~ /ARCH_ARM64/);
 $architecture = zarch  if ($data =~ /ARCH_ZARCH/);
 
+
+$os = ESP32;
+$architecture = esp32;
+
 $defined = 0;
 
 if ($os eq "AIX") {
@@ -153,6 +157,10 @@ if ($compiler eq "CLANG") {
 
 if ($compiler eq "GCC" || $compiler eq "LSB") {
     $openmp = "-fopenmp";
+}
+
+if ($architecture eq "esp32"){
+    $defined = 1;
 }
 
 if ($defined == 0) {

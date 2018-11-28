@@ -13,9 +13,9 @@ met:
       notice, this list of conditions and the following disclaimer in
       the documentation and/or other materials provided with the
       distribution.
-   3. Neither the name of the OpenBLAS project nor the names of 
-      its contributors may be used to endorse or promote products 
-      derived from this software without specific prior written 
+   3. Neither the name of the OpenBLAS project nor the names of
+      its contributors may be used to endorse or promote products
+      derived from this software without specific prior written
       permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
@@ -605,7 +605,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define CORENAME  "POWER6"
 #endif
 
-#if defined(FORCE_POWER8) 
+#if defined(FORCE_POWER8)
 #define FORCE
 #define ARCHITECTURE    "POWER"
 #define SUBARCHITECTURE "POWER8"
@@ -927,7 +927,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define ARCHCONFIG   "-DARMV8 " \
        "-DL1_DATA_SIZE=32768 -DL1_DATA_LINESIZE=64 " \
        "-DL2_SIZE=262144 -DL2_LINESIZE=64 " \
-       "-DDTB_DEFAULT_ENTRIES=64 -DDTB_SIZE=4096 -DL2_ASSOCIATIVE=32 " 
+       "-DDTB_DEFAULT_ENTRIES=64 -DDTB_SIZE=4096 -DL2_ASSOCIATIVE=32 "
 #define LIBNAME   "armv8"
 #define CORENAME  "ARMV8"
 #endif
@@ -1016,6 +1016,21 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define CORENAME  "Z13"
 #endif
 
+#ifdef FORCE_ESP32
+#define FORCE
+#define ARCHITECTURE    "ESP32"
+#define SUBARCHITECTURE "ESP32"
+#define SUBDIRNAME      "esp32"
+#define ARCHCONFIG   "-DESP32 " \
+       "-DL1_DATA_SIZE=32768 -DL1_DATA_LINESIZE=32 " \
+       "-DL2_SIZE=32768 -DL2_LINESIZE=32 " \
+       "-DDTB_DEFAULT_ENTRIES=128 -DDTB_SIZE=4096 -DL2_ASSOCIATIVE=4 "
+#define LIBNAME   "esp32"
+#define CORENAME  "ESP32"
+#else
+#endif
+
+
 #ifndef FORCE
 
 #if defined(__powerpc__) || defined(__powerpc) || defined(powerpc) || \
@@ -1076,6 +1091,9 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define OPENBLAS_SUPPORTED
 #endif
 
+#ifdef __esp32
+#include "cpuid_esp32.c"
+#endif
 
 #ifndef OPENBLAS_SUPPORTED
 #error "This arch/CPU is not supported by OpenBLAS."
@@ -1253,4 +1271,3 @@ int main(int argc, char *argv[]){
 
   return 0;
 }
-
